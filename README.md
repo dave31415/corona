@@ -20,10 +20,10 @@ from corona.plotting import plot
 
 plot(data)
  
+![alt text](https://raw.githubusercontent.com/dave31415/corona/master/images/all_data.png)
+
 # look at day to day changes
 plot(data, delta=True)
-
-![alt text](https://raw.githubusercontent.com/dave31415/corona/master/images/all_data.png)
 
 # lets make selections
 from corona.selector import Selector
@@ -35,6 +35,8 @@ plot(data, delta=True, selector=s)
 # Just Mainland China, Guangdong province
 s=Selector(country='Mainland China', province='Guangdong')
 plot(data, delta=True, selector=s)
+![alt text](https://raw.githubusercontent.com/dave31415/corona/master/images/guangdong.png)
+
 
 # Just Mainland China, not Hubei province
 s=Selector(country='Mainland China', province='!Hubei')
