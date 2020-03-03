@@ -47,7 +47,10 @@ def read_jh_data():
     return data
 
 
-def get_countries(jh_data, province=False):
+def get_countries(jh_data=None, province=False):
+    if jh_data is None:
+        jh_data = read_jh_data()
+
     sep = ' // '
     if province:
         def func(x):

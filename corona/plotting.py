@@ -1,5 +1,6 @@
 from bokeh.plotting import figure, show
 from collections import Counter
+from corona.selector import Selector
 
 
 def get_counts_by_country(jh_data, field, selector=None):
@@ -34,6 +35,11 @@ def plot(jh_data, selector=None, delta=False, title=None):
 
     fig = figure(x_axis_type="datetime", title=title, width=800, height=600)
     fig.yaxis.axis_label = '# '
+    if delta:
+        fig.yaxis.axis_label = '# / day'
+    else:
+        fig.yaxis.axis_label = '# / cumulative'
+
     fields = [('confirmed', 'blue'),
               ('recovered', 'green'),
               ('deaths', 'red')]
@@ -47,46 +53,3 @@ def plot(jh_data, selector=None, delta=False, title=None):
 
     fig.legend.location = "top_left"
     show(fig)
-
-
-class Selector:
-    def __init__(self, **kwargs):
-        if 'filter' in kwargs:
-            self.filter_func = kwargs['filter']
-
-            del kwargs['filter']
-            self.filtered=True
-        else:
-            self.filter_func = lambda x: True
-            self.filtered = False
-
-        self.filter_dict = kwargs
-
-        print(self.filter_dict)
-        print(self.filter_func)
-
-    def __call__(self, record):
-        for key, val in self.filter_dict.items():
-            if val.startswith('!'):
-                val = val[1:].strip()
-                if val in record[key]:
-                    return False
-            else:
-                if val not in record[key]:
-                    return False
-
-        return self.filter_func(record)
-
-    def get_title(self):
-        title = ''
-        adds = []
-        for key, val in self.filter_dict.items():
-            adds.append("%s=%s" % (key, val))
-
-        if len(adds) > 0:
-            title += ', '.join(adds)
-
-        if self.filtered:
-            title += ' - filtered'
-
-        return title
