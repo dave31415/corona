@@ -14,9 +14,7 @@ data = read_jh_data()
 
 from corona.plotting import plot
 
-# plot all the data for all regions
-# shows cases, recovered and deaths
-# in cumulative numbers        
+# plot all the data for all regions. Shows cases, recovered and deaths in cumulative numbers        
 
 plot(data)
  
@@ -42,9 +40,8 @@ plot(data, delta=True, selector=s)
 s=Selector(country='Mainland China', province='!Hubei')
 plot(data, delta=True, selector=s)
 
-# Just United States patients evaculated from the Diamond Princess ship
-# Shows ability to use an arbitrary function for selection
-s=Selector(country='US', filter=lambda x: "Diamond" in x['province'])
+# Just United States patients evaculated from the Diamond Princess ship. Shows ability to use an arbitrary function for selection
+s = (country='US', filter=lambda x: "Diamond" in x['province'])
 plot(data, selector=s, title='US Diamond Princess')
 
 # Show me all the countries
