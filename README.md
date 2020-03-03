@@ -23,7 +23,7 @@ plot(data)
 # look at day to day changes
 plot(data, delta=True)
 
-![alt text](https://raw.githubusercontent.com/dave31415/corona/images/all_data.png)
+![alt text](https://raw.githubusercontent.com/dave31415/corona/master/images/all_data.png)
 
 # lets make selections
 from corona.selector import Selector
