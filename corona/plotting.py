@@ -26,14 +26,18 @@ def get_diff(counts):
     return diff
 
 
-def plot(jh_data, selector=None, delta=False, title=None):
+def plot(jh_data, selector=None, delta=False, title=None, y_log=False):
     if selector is None:
         selector = Selector()
 
     if title is None:
         title = selector.get_title()
 
-    fig = figure(x_axis_type="datetime", title=title, width=800, height=600)
+    y_axis_type = "linear"
+    if y_log:
+        y_axis_type = "log"
+
+    fig = figure(x_axis_type="datetime", title=title, width=800, height=600, y_axis_type=y_axis_type)
     fig.yaxis.axis_label = '# '
     if delta:
         fig.yaxis.axis_label = '# / day'
