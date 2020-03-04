@@ -60,3 +60,12 @@ def get_countries(jh_data=None, province=False):
             return x['country']
 
     return sorted({func(r) for r in jh_data})
+
+
+def is_europe(country):
+    countries = {'France', 'Spain', 'UK', 'Sweden', 'Switzerland', 'Italy',
+                 'Portugal', 'Germany', 'Romania', 'North Ireland',
+                 'Netherlands', 'Norway', 'Luxembourg', 'Ireland',
+                 'Iceland', 'Greece', 'Finland', 'Denmark', 'Croatia',
+                 'Belgium', 'Austria', 'Andora'}
+    return country in countries

@@ -48,7 +48,7 @@ def plot(jh_data, selector=None, delta=False, title=None):
 
         if delta:
             counts = get_diff(counts)
-        fig.line(dates, counts, legend=field, color=color)
+        fig.line(dates, counts, legend=field, color=color, line_width=3)
         fig.circle(dates, counts, alpha=0.2, color=color)
 
     fig.legend.location = "top_left"
