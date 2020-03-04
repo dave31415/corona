@@ -1,5 +1,6 @@
-from bokeh.plotting import figure, show
 from collections import Counter
+from bokeh.plotting import figure, show
+import numpy as np
 from corona.selector import Selector
 
 
@@ -54,6 +55,12 @@ def plot(jh_data, selector=None, delta=False, title=None, y_log=False):
             counts = get_diff(counts)
         fig.line(dates, counts, legend=field, color=color, line_width=3)
         fig.circle(dates, counts, alpha=0.2, color=color)
+
+    dates, deaths = np.array(get_counts_by_country(jh_data, 'deaths', selector=selector))
+    dates, confirmed = np.array(get_counts_by_country(jh_data, 'confirmed', selector=selector))
+    death_rate = 100 * 1000 * deaths/(confirmed + 0.0001)
+
+    fig.line(dates, death_rate, legend='death rate (%)/1000', color='gray', line_width=2)
 
     fig.legend.location = "top_left"
     show(fig)
