@@ -10,4 +10,4 @@ def index():
     try:
         return plot(data, delta=True, raw_html=True)
     except ValueError as err:
-        return "Hello worlds! Error trying to plot data %s" % valError
+        return "Hello worlds! Error trying to plot data %s" % err
