@@ -1,4 +1,6 @@
 from bokeh.plotting import figure, show
+from bokeh.embed import file_html
+from bokeh.resources import CDN
 from collections import Counter
 from corona.selector import Selector
 
@@ -26,7 +28,7 @@ def get_diff(counts):
     return diff
 
 
-def plot(jh_data, selector=None, delta=False, title=None, y_log=False):
+def plot(jh_data, selector=None, delta=False, title=None, y_log=False, raw_html=False):
     if selector is None:
         selector = Selector()
 
@@ -56,4 +58,8 @@ def plot(jh_data, selector=None, delta=False, title=None, y_log=False):
         fig.circle(dates, counts, alpha=0.2, color=color)
 
     fig.legend.location = "top_left"
-    show(fig)
+    # bokeh makes html, see if we can optionally return html
+    if raw_html == False:
+        show(fig)
+    else:
+        return file_html(fig, CDN)
