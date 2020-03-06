@@ -1,2 +1,1 @@
-release: ./update_data.sh
-web: gunicorn app:app --log-file -
+web: ./update_data.sh; gunicorn app:app --log-file -
