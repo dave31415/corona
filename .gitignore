@@ -2,4 +2,4 @@ data/updates
 *.pyc
 .idea
 venv
-
+cache
