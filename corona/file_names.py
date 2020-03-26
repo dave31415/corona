@@ -3,8 +3,10 @@ Keep all filename/path logic here rather than polluting code with hardcoded path
 """
 import os
 
-data_dir_default = 'data'
-tmp_dir = 'tmp'
+this_dir = os.path.dirname(__file__)
+root_dir = os.path.realpath("%s/.." % this_dir)
+data_dir_default = '%s/data' % root_dir
+tmp_dir = '%s/tmp' % root_dir
 
 data_dir = os.getenv('CORONA_DATA_DIR', data_dir_default)
 novel_dir = "%s/novel" % data_dir

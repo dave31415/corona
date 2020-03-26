@@ -79,6 +79,11 @@ def plot_ecdc(location='US', field='cases', y_log=False,
               date_min=None, date_max='2050-01-01',
               degree=1, show_fit=False, show_smooth=False,
               fudge=None):
+
+    if fudge is None:
+        if location == 'Italy':
+            fudge = {'2020-03-15': 90 + 3000, '2020-03-16': 6230 - 3000}
+
     if y_log:
         y_axis_type = 'log'
     else:
