@@ -29,23 +29,48 @@ def process_jh_record(record):
     record['last_update'] = record['Last Update']
     del record['Last Update']
 
-    record['report_date'] = datetime.strptime(record['report_date_string'], '%m-%d-%Y')
+    record['report_date'] = datetime.strptime(record['report_date_string'], '%Y-%m-%d')
     record['country'] = record['Country/Region']
     record['province'] = record['Province/State']
     del record['Country/Region'], record['Province/State']
+
+
+def process_jh_record_new(record):
+    for tag in ['Confirmed', 'Recovered', 'Deaths']:
+        record[tag.lower()] = str2float(record[tag])
+        del record[tag]
+
+    record['last_update'] = record['Last_Update']
+    del record['Last_Update']
+
+    record['report_date'] = datetime.strptime(record['report_date_string'], '%Y-%m-%d')
+    record['country'] = record['Country_Region']
+    record['province'] = record['Province_State']
+    del record['Country_Region'], record['Province_State']
 
 
 def read_jh_data():
     files = get_jh_files()
     data = []
     for file in files:
+        print('file: %s' % file)
         report_data = list(DictReader(open(file, 'r', encoding='utf-8-sig')))
         for line in report_data:
             report_date = file.split('/')[-1].split('.csv')[0]
+            # fix date to YYYY-MM-DD
+            month, day, year = report_date.split('-')
+            report_date = '%s-%s-%s' % (year, month, day)
             line['report_date_string'] = report_date
-            process_jh_record(line)
+            if report_date < '2020-03-22':
+                # old format
+                process_jh_record(line)
+            else:
+                # read new format
+                process_jh_record_new(line)
+
         report_data = [dict(line) for line in report_data]
         data.extend(report_data)
+
     return data
 
 
