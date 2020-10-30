@@ -3,7 +3,10 @@ from glob import glob
 from datetime import datetime
 from datetime import timedelta
 import os
-from corona.file_names import file_names, data_dir
+from bs4 import BeautifulSoup
+from html_table_extractor.extractor import Extractor
+
+from corona.file_names import file_names, data_dir, world_o_meter_dir
 
 
 def read_data_raw():
@@ -165,18 +168,19 @@ def read_latest_ecdc():
     data = []
     for row in raw_data:
         row = dict(row)
-        row['location'] = row['Countries and territories']
-        row['cases'] = int(row['Cases'])
-        row['deaths'] = int(row['Deaths'])
+        row['location'] = row['countriesAndTerritories']
+        row['cases'] = int(row['cases'])
+        if row['deaths'] == '':
+            row['deaths'] = 0
+
+        row['deaths'] = int(row['deaths'])
 
         if row['location'] == 'United_States_of_America':
             row['location'] = 'US'
 
-        row['date'] = datetime(int(row['Year']), int(row['Month']), int(row['Day']))
+        row['date'] = datetime(int(row['year']), int(row['month']), int(row['day']))
 
-        del row['Countries and territories']
-        del row['Cases']
-        del row['Deaths']
+        del row['countriesAndTerritories']
         data.append(row)
     return data
 
@@ -196,6 +200,135 @@ def get_ecdc_data(location='US', field='cases'):
     dates = [i['date'] for i in data]
     number = [i[field] for i in data]
     return dates, number
+
+
+def read_open_table():
+    return list(DictReader(open(file_names['open_table'], 'r')))
+
+
+def read_states():
+    states = list(DictReader(open(file_names['states'], 'r')))
+    return [i['State'] for i in states]
+
+
+def read_state_vote():
+    states = list(DictReader(open(file_names['states'], 'r')))
+    return {i['State']: float(i['Gov_R']) for i in states}
+
+
+def get_open_table_for_states():
+    ot = read_open_table()
+    states = read_states()
+    return {i['Name']: i for i in ot if i['Type'] == 'state'
+            and i['Name'] in states}
+
+
+def read_world_o_meter_raw(date_time_string):
+    if 'html' not in date_time_string:
+        filename = file_names['world_o_meter'].format(date=date_time_string)
+    else:
+        filename = date_time_string
+
+    return open(filename, 'r').read()
+
+
+def cap_state(state):
+    return " ".join([i.capitalize() for i in state.split()])
+
+
+def line_to_num(line):
+    return int(line.split('>')[1].split('<')[0].strip().replace(',', ''))
+
+
+def get_world_o_meter_values(date_time_string):
+    html = read_world_o_meter_raw(date_time_string)
+    if len(html) < 100:
+        return None
+
+    states = read_states()
+    states.append('Puerto Rico')
+
+    soup = BeautifulSoup(html, 'html.parser')
+
+    extractor_today = Extractor(soup, id_="usa_table_countries_today")
+    extractor_today.parse()
+    table_today = extractor_today.return_list()
+
+    extractor_yest = Extractor(soup, id_="usa_table_countries_yesterday")
+    extractor_yest.parse()
+    table_yest = extractor_yest.return_list()
+
+    data = {}
+    new_today = None
+    new_yest = None
+
+    for state in states:
+        today = 0
+        yesterday = 0
+
+        for row in table_today:
+            if cap_state(state).strip() == row[0].strip():
+                today = int(row[1].replace(',', ''))
+
+                new_today = row[2].strip().replace(',', '').replace('+', '')
+                if new_today == '':
+                    new_today = 0
+                else:
+                    new_today = int(new_today)
+
+        for row in table_yest:
+            if cap_state(state).strip() == row[0].strip():
+                yesterday = int(row[1].replace(',', ''))
+
+                new_yest = row[2].strip().replace(',', '').replace('+', '')
+                if new_yest == '':
+                    new_yest = 0
+                else:
+                    new_yest = int(new_yest)
+
+        assert yesterday > 0
+        assert today > 0
+
+        diff = today - yesterday
+        assert diff < 10000
+
+        data[state] = {'total_cases_yesterday': yesterday,
+                       'total_cases_today': today,
+                       'difference': diff,
+                       'new_today': new_today,
+                       'new_yesterday': new_yest}
+
+        assert new_today == diff
+
+    return data
+
+
+def get_datetime_from_filename(filename):
+    datetime_string = filename.split('/')[-1].split('report_')[-1].split('.html')[0]
+    date_time_obj = datetime.strptime(datetime_string, '%y-%m-%d_%H:%M:%S')
+    return date_time_obj
+
+
+def get_sequences():
+    files = sorted(glob(world_o_meter_dir+'/*.html'))
+    n_files = len(files)
+    print(n_files, 'files')
+    states = read_states()
+    states.append('Puerto Rico')
+    seq_data = {state: [] for state in states}
+
+    date_time = []
+    for file in files:
+        date_time.append(get_datetime_from_filename(file))
+        data = get_world_o_meter_values(file)
+        if data is None:
+            continue
+
+        for state in states:
+            n_cases = data[state]['new_today']
+            seq_data[state].append(n_cases)
+
+    return date_time, seq_data
 
 
 if __name__ == "__main__":
