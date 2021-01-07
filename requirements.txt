@@ -187,7 +187,7 @@ lazy_object_proxy == 1.4.3
 # env/lib/python3.7/site-packages/pip/_vendor/html5lib/treewalkers/etree_lxml.py: 4
 # venv/lib/python3.7/site-packages/pip/_vendor/html5lib/treebuilders/etree_lxml.py: 25
 # venv/lib/python3.7/site-packages/pip/_vendor/html5lib/treewalkers/etree_lxml.py: 4
-lxml == 4.5.0
+lxml == 4.6.2
 
 # env/lib/python3.7/site-packages/pylint/extensions/mccabe.py: 10,11
 mccabe == 0.6.1
