@@ -653,7 +653,7 @@ typed_ast == 1.4.1
 
 # env/lib/python3.7/site-packages/pip/_internal/commands/install.py: 43
 # venv/lib/python3.7/site-packages/pip/_internal/commands/install.py: 333
-wheel == 0.33.6
+wheel == 0.38.1
 
 # env/lib/python3.7/site-packages/astroid/__init__.py: 43
 # env/lib/python3.7/site-packages/astroid/decorators.py: 17
