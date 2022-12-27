@@ -635,7 +635,7 @@ rfc3986 == 1.3.2
 # venv/lib/python3.7/site-packages/setuptools/unicode_utils.py: 5
 # venv/lib/python3.7/site-packages/setuptools/version.py: 1
 # venv/lib/python3.7/site-packages/setuptools/wheel.py: 11,12,13,14,15,16,17
-setuptools == 42.0.2
+setuptools == 65.5.1
 
 # env/lib/python3.7/site-packages/astroid/brain/brain_builtin_inference.py: 15
 # env/lib/python3.7/site-packages/astroid/brain/brain_hashlib.py: 8
